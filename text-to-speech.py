@@ -1,17 +1,14 @@
 import os
-import io
 from dotenv import load_dotenv
 import azure.cognitiveservices.speech as speechsdk
 
-def text_to_speech(api_key,region):  
+def text_to_speech(api_key, region, text):  
     speech_config = speechsdk.SpeechConfig(subscription=api_key, region=region)    
     audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
 
-    speechsynthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config,audio_config=audio_config)
+    speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
 
-    text = input("Enter the text to be spoken: ")
-
-    speech_synthesis_result = speechsynthesizer.speak_text_async(text).get()
+    speech_synthesis_result = speech_synthesizer.speak_text_async(text).get()
 
     if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
         print("Speech synthesized for text [{}]".format(text))
@@ -23,9 +20,9 @@ def text_to_speech(api_key,region):
                 print("Error details: {}".format(cancellation_details.error_details))
                 print("Did you set the speech resource key and region values?")
 
-load_dotenv()
-
-api_key = os.getenv('api_key')
-region = os.getenv('region')
-
-text_to_speech(api_key,region)
+if __name__ == "__main__":
+    load_dotenv()
+    api_key = os.getenv('api_key')
+    region = os.getenv('region')
+    text = input("Enter the text to be spoken: ")
+    text_to_speech(api_key, region, text)
